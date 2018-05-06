@@ -2,6 +2,8 @@
 
 // Define pins
 const int RECV_PIN = 11;
+const int ledPin2 = 12;
+const int ledPin3 = 13;
 const int displayStartPin = 2;  // Start PIN for display (we use startPin, startPin + 1, ..., startPin + 7)
 
 // Remote control's buttons
@@ -26,6 +28,11 @@ decode_results results;
 void setup(){
   Serial.begin(9600);
   irrecv.enableIRIn();
+  pinMode(ledPin2,OUTPUT);
+  pinMode(ledPin3,OUTPUT);                    
+
+  digitalWrite(ledPin2, ledState);
+  digitalWrite(ledPin3, ledState);
 
   for(int pin = 0; pin <= 7 ; pin++){   
       pinMode(displayStartPin + pin, OUTPUT);
@@ -49,8 +56,20 @@ int number[10][8] =            //the array is used to store the number 0~9
 
 // this function is used to display numbers
 void showNumber(int i) {
+  int lastDigit = i % 10;
   for(int pin = 0; pin <= 6 ; pin++){
-     digitalWrite(displayStartPin + pin, number[i][pin]);
+     digitalWrite(displayStartPin + pin, number[lastDigit][pin]);
+  }
+
+  const int dpPin = displayStartPin + 7;
+
+  if ( i > 9 )
+  {
+     digitalWrite(dpPin, 0);
+  }
+  else 
+  {
+     digitalWrite(dpPin, 1);
   }
 }
 
@@ -60,12 +79,20 @@ void loop() {
 
     switch (results.value){
       case Button_Power:
-        int countDown = 9;
+        ledState = !ledState;
+        digitalWrite(ledPin2, ledState);
+        digitalWrite(ledPin3, ledState);
+        //digitalWrite(ledPin1, ledState);
+        int countDown = 19;
         while ( countDown >= 0 ) {
           showNumber(countDown);
           delay(1000);
           --countDown;
         }
+        ledState = !ledState;
+        digitalWrite(ledPin2, ledState);
+        digitalWrite(ledPin3, ledState);
+        //digitalWrite(ledPin1, ledState);
         break;
     }
 
