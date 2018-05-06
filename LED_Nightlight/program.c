@@ -1,11 +1,32 @@
+#include <IRremote.h>
+
 // Define pins
+const int RECV_PIN = 11;
 const int displayStartPin = 2;  // Start PIN for display (we use startPin, startPin + 1, ..., startPin + 7)
+
+// Remote control's buttons
+const unsigned long Button_Power = 0xFD00FF;
+const unsigned long Button_0 = 0xFD30CF;
+const unsigned long Button_1 = 0xFD08F7;
+const unsigned long Button_2 = 0xFD8877;
+const unsigned long Button_3 = 0xFD48B7;
+const unsigned long Button_4 = 0xFD28D7;
+const unsigned long Button_5 = 0xFDA857;
+const unsigned long Button_6 = 0xFD6897;
+const unsigned long Button_7 = 0xFD18E7;
+const unsigned long Button_8 = 0xFD9867;
+const unsigned long Button_9 = 0xFD58A7;
 
 // Define varables 
 boolean ledState = LOW;
 boolean ledState2 = HIGH;
+IRrecv irrecv(RECV_PIN);
+decode_results results;
 
 void setup(){
+  Serial.begin(9600);
+  irrecv.enableIRIn();
+
   for(int pin = 0; pin <= 7 ; pin++){   
       pinMode(displayStartPin + pin, OUTPUT);
       digitalWrite(displayStartPin + pin, HIGH);
@@ -34,10 +55,20 @@ void showNumber(int i) {
 }
 
 void loop() {
-  int countDown = 9;
-  while ( countDown >= 0 ) {
-    showNumber(countDown);
-    delay(1000);
-    --countDown;
+  if (irrecv.decode(&results)) {
+    Serial.println(results.value, HEX);
+
+    switch (results.value){
+      case Button_Power:
+        int countDown = 9;
+        while ( countDown >= 0 ) {
+          showNumber(countDown);
+          delay(1000);
+          --countDown;
+        }
+        break;
+    }
+
+    irrecv.resume();
   }
 }
