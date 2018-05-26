@@ -29,8 +29,8 @@ void setup(){
   Serial.begin(9600);
   irrecv.enableIRIn();
   pinMode(ledPin2,OUTPUT);
-  pinMode(ledPin3,OUTPUT);                    
-
+  pinMode(ledPin3,OUTPUT);        
+              
   digitalWrite(ledPin2, ledState);
   digitalWrite(ledPin3, ledState);
 
@@ -82,7 +82,7 @@ void loop() {
         ledState = !ledState;
         digitalWrite(ledPin2, ledState);
         digitalWrite(ledPin3, ledState);
-        //digitalWrite(ledPin1, ledState);
+        
         int countDown = 19;
         while ( countDown >= 0 ) {
           showNumber(countDown);
@@ -92,7 +92,11 @@ void loop() {
         ledState = !ledState;
         digitalWrite(ledPin2, ledState);
         digitalWrite(ledPin3, ledState);
-        //digitalWrite(ledPin1, ledState);
+        
+        for(int pin = 0; pin <= 7 ; pin++){   
+          digitalWrite(displayStartPin + pin, HIGH);
+        }
+        
         break;
     }
 
